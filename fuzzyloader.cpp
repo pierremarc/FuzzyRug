@@ -79,19 +79,21 @@ void FuzzyLoader::load(QMap<QString, RugItem *> *rugs)
 			QXmlStreamAttributes attr(reader.attributes());
 			RugItem * ri(new RugItem(attr.value("name").toString()));
 			QSizeF rs;
-			QString hstr,wstr,xstr,ystr,thstr,psstr;
+			QString hstr,wstr,xstr,ystr,thstr,psstr, wp100;
 			hstr = attr.value("height").toString();
 			wstr = attr.value("width").toString();
 			xstr = attr.value("xpos").toString();
 			ystr = attr.value("ypos").toString();
 			thstr = attr.value("threadheight").toString();
 			psstr = attr.value("patternsize").toString();
+			wp100 = attr.value("wphundred").toString();
 			rs.setHeight(strtod(hstr.toLatin1().data(), NULL));
 			rs.setWidth(strtod(wstr.toLatin1().data(), NULL));
 			ri->setRugSize(rs);
 			ri->setPos(xstr.toDouble(), ystr.toDouble());
-			ri->setThreadHeight(thstr.toDouble());
-			ri->setPatternSize(psstr.toDouble());
+			ri->setThreadHeight(strtod(thstr.toLatin1().data(), NULL));
+			ri->setPatternSize(strtod(psstr.toLatin1().data(), NULL));
+			ri->setWP100(strtod(wp100.toLatin1().data(), NULL));
 
 			while(reader.readNextStartElement())
 			{

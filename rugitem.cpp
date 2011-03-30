@@ -35,11 +35,12 @@
 #define RUGITEM_MARGIN 3
 
 RugItem::RugItem(const QString& name) :
-		rugName(name),
-		threadPattern(ThreadPattern::DefaultPattern()),
-		threadHeight(1),
-		patternSize(ThreadPattern::DefaultPattern()->getImage().widthMM()),
-		rugSize(QSizeF(200,200))
+	rugName(name),
+	threadPattern(ThreadPattern::DefaultPattern()),
+	threadHeight(1),
+	patternSize(ThreadPattern::DefaultPattern()->getImage().widthMM()),
+	wp100(100),
+	rugSize(QSizeF(200,200))
 {
 	setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable );
 	setCursor(Qt::OpenHandCursor);
@@ -74,19 +75,22 @@ void RugItem::fillBuffer()
 {
 	QImage img(threadPattern->getImage());
 	QPen pen;
-	pen.setWidth(1);
-	double bottom(RUGITEM_MARGIN + rugSize.height());
-	double right(RUGITEM_MARGIN + rugSize.width());
-	buffer = QImage(boundingRect().toRect().size(), QImage::Format_ARGB32);
+	const double bottom(RUGITEM_MARGIN + rugSize.height());
+	const double right(RUGITEM_MARGIN + rugSize.width());
+	const double step(rugSize.width() / (rugSize.width() * wp100 / 100.0) );
+	const int rectifW(ceil(boundingRect().width()));
+	const int rectifH(ceil(boundingRect().height()));
+	buffer = QImage(QSize(rectifW, rectifH), QImage::Format_ARGB32);
 	buffer.fill(QColor(Qt::white).rgb());
 	QPainter pp(&buffer);
 	double tc(0);
 	bool LTR(true);
-	for(int y(RUGITEM_MARGIN ); y < bottom ; ++y)
+	pen.setWidthF(step);
+	for(double y(RUGITEM_MARGIN ); y < bottom ; y += step)
 	{
 		if(LTR)
 		{
-			for(int x(RUGITEM_MARGIN ); x < right; ++x)
+			for(double x(RUGITEM_MARGIN ); x < right; x += step)
 			{
 				pen.setColor(colorAt(tc));
 				pp.setPen(pen);
@@ -97,7 +101,7 @@ void RugItem::fillBuffer()
 		}
 		else
 		{
-			for(int x(right - 1); x >= RUGITEM_MARGIN; --x)
+			for(double x(right - 1); x >= RUGITEM_MARGIN; x -= step)
 			{
 				pen.setColor(colorAt(tc));
 				pp.setPen(pen);
@@ -159,7 +163,7 @@ void RugItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
 QRectF RugItem::boundingRect() const
 {
 	double tm(2 * RUGITEM_MARGIN);
-	return QRectF(0, 0, double(tm + rugSize.width()), double(tm + rugSize.height()));
+	return QRectF(0, 0, tm + rugSize.width(), tm + rugSize.height());
 }
 
 void RugItem::setThreadHeight(double t)
@@ -175,6 +179,14 @@ void RugItem::setPatternSize(double s)
 	if(s != patternSize)
 		validBuffer = false;
 	patternSize = s;
+	update();
+}
+
+void RugItem::setWP100(double v)
+{
+	if(v != wp100)
+		validBuffer = false;
+	wp100 = v;
 	update();
 }
 
@@ -195,6 +207,7 @@ void RugItem::setRugSize(QSizeF s)
 		validBuffer = false;
 		prepareGeometryChange();
 		rugSize = s;
+		update();
 	}
 }
 

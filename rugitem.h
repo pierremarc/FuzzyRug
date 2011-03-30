@@ -39,6 +39,7 @@ class RugItem : public QGraphicsObject
 	ThreadPattern * threadPattern;
 	double threadHeight;
 	double patternSize;
+	double wp100;
 
 	QSizeF rugSize;
 
@@ -75,6 +76,9 @@ public:
 
 	ThreadPattern * getThreadPattern() const {return threadPattern;}
 	void setThreadPattern(ThreadPattern * t, bool updatePSize = true);
+
+	double getWP100()const{return wp100;}
+	void setWP100(double v);
 
 	void setRugSize(QSizeF s);
 	QSizeF getRugSize() const {return rugSize;}

@@ -61,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->rugWidth->setRange(1.0, 100000.0);
     ui->patternSize->setRange(1.0, 100000.0);
     ui->threadHeight->setRange(1.0, 10000.0);
+    ui->wp100->setRange(1.0, 100000.0);
 
     ui->rugView->setScene(rugScene);
 
@@ -75,8 +76,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->rugWidth, SIGNAL(valueChanged(double)), this, SLOT(slotChangeRugWidth(double)));
     connect(ui->threadHeight, SIGNAL(valueChanged(double)), this, SLOT(slotChangeThreadHeight(double)));
     connect(ui->patternSize, SIGNAL(valueChanged(double)), this, SLOT(slotChangePatternSize(double)));
+    connect(ui->wp100, SIGNAL(valueChanged(double)), this, SLOT(slotChangeWP100(double)));
 
     connect(ui->zoom, SIGNAL(valueChanged(int)), this, SLOT(slotZoom(int)));
+    connect(ui->resetZoom, SIGNAL(clicked()), this, SLOT(slotResetZoom()));
 
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(slotOpen()));
     connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(slotNew()));
@@ -102,6 +105,7 @@ void MainWindow::blockSpinBoxesSignal(bool b)
 	ui->rugWidth->blockSignals(b);
 	ui->threadHeight->blockSignals(b);
 	ui->patternSize->blockSignals(b);
+	ui->wp100->blockSignals(b);
 }
 
 void MainWindow::updateSpinBoxes()
@@ -111,6 +115,7 @@ void MainWindow::updateSpinBoxes()
 	ui->rugWidth->setValue(currentRug->getRugSize().width());
 	ui->threadHeight->setValue(currentRug->getThreadHeight());
 	ui->patternSize->setValue(currentRug->getPatternSize());
+	ui->wp100->setValue(currentRug->getWP100());
 	blockSpinBoxesSignal(false);
 }
 
@@ -286,12 +291,24 @@ void MainWindow::slotChangePatternSize(double v)
 	currentRug->setPatternSize(v);
 }
 
+void MainWindow::slotChangeWP100(double v)
+{
+	if(!currentRug)
+		return;
+	currentRug->setWP100(v);
+}
+
 void MainWindow::slotZoom(int s)
 {
 	QTransform t;
 	t.scale(double(s) / 100.0 ,double(s) / 100.0);
 	ui->zoomLabel->setText(QString("%1 \%").arg(s));
 	ui->rugView->setTransform(t);
+}
+
+void MainWindow::slotResetZoom()
+{
+	ui->zoom->setValue(100);
 }
 
 void MainWindow::slotOpen()

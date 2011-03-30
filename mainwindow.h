@@ -73,8 +73,10 @@ private slots:
 	void slotChangeRugHeight(double v);
 	void slotChangeThreadHeight(double v);
 	void slotChangePatternSize(double v);
+	void slotChangeWP100(double v);
 
 	void slotZoom(int s);
+	void slotResetZoom();
 
 	void slotOpen();
 	void slotNew();
