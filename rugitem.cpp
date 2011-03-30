@@ -178,12 +178,13 @@ void RugItem::setPatternSize(double s)
 	update();
 }
 
-void RugItem::setThreadPattern(ThreadPattern *t)
+void RugItem::setThreadPattern(ThreadPattern *t, bool updatePSize)
 {
 	if(t != threadPattern)
 		validBuffer = false;
 	threadPattern = t;
-	patternSize = t->getImage().widthMM();
+	if(updatePSize)
+		patternSize = t->getImage().widthMM();
 	update();
 }
 

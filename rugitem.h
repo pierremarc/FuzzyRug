@@ -74,7 +74,7 @@ public:
 	void setPatternSize(double s);
 
 	ThreadPattern * getThreadPattern() const {return threadPattern;}
-	void setThreadPattern(ThreadPattern * t);
+	void setThreadPattern(ThreadPattern * t, bool updatePSize = true);
 
 	void setRugSize(QSizeF s);
 	QSizeF getRugSize() const {return rugSize;}

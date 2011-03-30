@@ -86,8 +86,8 @@ void FuzzyLoader::load(QMap<QString, RugItem *> *rugs)
 			ystr = attr.value("ypos").toString();
 			thstr = attr.value("threadheight").toString();
 			psstr = attr.value("patternsize").toString();
-			rs.setHeight(hstr.toDouble());
-			rs.setWidth(wstr.toDouble());
+			rs.setHeight(strtod(hstr.toLatin1().data(), NULL));
+			rs.setWidth(strtod(wstr.toLatin1().data(), NULL));
 			ri->setRugSize(rs);
 			ri->setPos(xstr.toDouble(), ystr.toDouble());
 			ri->setThreadHeight(thstr.toDouble());
@@ -98,7 +98,7 @@ void FuzzyLoader::load(QMap<QString, RugItem *> *rugs)
 				if(reader.name() == "pattern")
 				{
 					QString pattern(reader.readElementText());
-					ri->setThreadPattern(tpc->value(pattern));
+					ri->setThreadPattern(tpc->value(pattern), false);
 				}
 				else
 					reader.skipCurrentElement();
