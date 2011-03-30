@@ -78,11 +78,12 @@ void FuzzySaver::save(const QMap<QString, RugItem *> &rugs)
 			stream.writeStartElement("rug");
 
 			stream.writeAttribute("name", rug->getRugName());
-			stream.writeAttribute("xpos", QString::number(rug->x()));
-			stream.writeAttribute("ypos", QString::number(rug->y()));
-			stream.writeAttribute("width", QString::number(rug->getRugSize().width()));
-			stream.writeAttribute("height", QString::number(rug->getRugSize().height()));
-			stream.writeAttribute("threadheight", QString::number(rug->getThreadHeight()));
+			stream.writeAttribute("xpos", QString::number(rug->x(), 'f'));
+			stream.writeAttribute("ypos", QString::number(rug->y(), 'f'));
+			stream.writeAttribute("width", QString::number(rug->getRugSize().width(), 'f'));
+			stream.writeAttribute("height", QString::number(rug->getRugSize().height(), 'f'));
+			stream.writeAttribute("threadheight", QString::number(rug->getThreadHeight(), 'f'));
+			stream.writeAttribute("patternsize", QString::number(rug->getPatternSize(), 'f'));
 
 			stream.writeTextElement("pattern", rug->getThreadPattern()->getName());
 

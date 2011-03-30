@@ -30,13 +30,16 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
+#include <cmath>
+
 #define RUGITEM_MARGIN 3
 
 RugItem::RugItem(const QString& name) :
 		rugName(name),
 		threadPattern(ThreadPattern::DefaultPattern()),
 		threadHeight(1),
-		rugSize(QSize(200,200))
+		patternSize(ThreadPattern::DefaultPattern()->getImage().widthMM()),
+		rugSize(QSizeF(200,200))
 {
 	setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable );
 	setCursor(Qt::OpenHandCursor);
@@ -45,13 +48,13 @@ RugItem::RugItem(const QString& name) :
 	rugHandle = HandleNone;
 }
 
-int RugItem::nextStep(int base)
+double RugItem::nextStep(double base)
 {
-	int ret(0);
-	int step(2*threadHeight);
-	if((base + step) >= tmax)
+	double ret(0);
+	double step(2*threadHeight);
+	if((base + step) >= patternSize)
 	{
-		ret = (base + step) - tmax;
+		ret = (base + step) - patternSize;
 	}
 	else
 		ret = base + step;
@@ -60,18 +63,24 @@ int RugItem::nextStep(int base)
 
 }
 
+QColor RugItem::colorAt(double pos)
+{
+	QImage img(threadPattern->getImage());
+	// TODO build a color that would take in account the thickness of the thread such as if it goes beyond one "pixel" we would return a mix of colors
+	return QColor(img.pixel(floor(pos * (double(img.width()) / patternSize) ),0));
+}
+
 void RugItem::fillBuffer()
 {
 	QImage img(threadPattern->getImage());
-	tmax = img.width();
 	QPen pen;
 	pen.setWidth(1);
-	int bottom(RUGITEM_MARGIN + rugSize.height());
-	int right(RUGITEM_MARGIN + rugSize.width());
+	double bottom(RUGITEM_MARGIN + rugSize.height());
+	double right(RUGITEM_MARGIN + rugSize.width());
 	buffer = QImage(boundingRect().toRect().size(), QImage::Format_ARGB32);
 	buffer.fill(QColor(Qt::white).rgb());
 	QPainter pp(&buffer);
-	int tc(0);
+	double tc(0);
 	bool LTR(true);
 	for(int y(RUGITEM_MARGIN ); y < bottom ; ++y)
 	{
@@ -79,7 +88,7 @@ void RugItem::fillBuffer()
 		{
 			for(int x(RUGITEM_MARGIN ); x < right; ++x)
 			{
-				pen.setColor(QColor(img.pixel(tc,0)));
+				pen.setColor(colorAt(tc));
 				pp.setPen(pen);
 				pp.drawPoint(x,y);
 				tc = nextStep(tc);
@@ -90,7 +99,7 @@ void RugItem::fillBuffer()
 		{
 			for(int x(right - 1); x >= RUGITEM_MARGIN; --x)
 			{
-				pen.setColor(QColor(img.pixel(tc,0)));
+				pen.setColor(colorAt(tc));
 				pp.setPen(pen);
 				pp.drawPoint(x,y);
 				tc = nextStep(tc);
@@ -153,11 +162,19 @@ QRectF RugItem::boundingRect() const
 	return QRectF(0, 0, double(tm + rugSize.width()), double(tm + rugSize.height()));
 }
 
-void RugItem::setThreadHeight(unsigned int t)
+void RugItem::setThreadHeight(double t)
 {
 	if(t != threadHeight)
 		validBuffer = false;
 	threadHeight = t;
+	update();
+}
+
+void RugItem::setPatternSize(double s)
+{
+	if(s != patternSize)
+		validBuffer = false;
+	patternSize = s;
 	update();
 }
 
@@ -166,10 +183,11 @@ void RugItem::setThreadPattern(ThreadPattern *t)
 	if(t != threadPattern)
 		validBuffer = false;
 	threadPattern = t;
+	patternSize = t->getImage().widthMM();
 	update();
 }
 
-void RugItem::setRugSize(QSize s)
+void RugItem::setRugSize(QSizeF s)
 {
 	if(s != rugSize)
 	{
@@ -267,9 +285,9 @@ void RugItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 	setCursor(Qt::OpenHandCursor);
 }
 
-QImage RugItem::getBuffer(QSize s)
+QImage RugItem::getBuffer(QSizeF s)
 {
-	QSize storeS(rugSize);
+	QSizeF storeS(rugSize);
 	rugSize = s;
 	fillBuffer();
 	rugSize = storeS;

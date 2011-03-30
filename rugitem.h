@@ -23,9 +23,10 @@
 #define RUGITEM_H
 
 #include <QGraphicsObject>
-#include <QSize>
+#include <QSizeF>
 #include <QRectF>
 #include <QString>
+#include <QColor>
 
 class ThreadPattern;
 
@@ -36,11 +37,13 @@ class RugItem : public QGraphicsObject
 	const QString rugName;
 
 	ThreadPattern * threadPattern;
-	unsigned int threadHeight;
-	QSize rugSize;
+	double threadHeight;
+	double patternSize;
 
-	int tmax;
-	int nextStep(int base);
+	QSizeF rugSize;
+
+	double nextStep(double base);
+	QColor colorAt(double pos);
 
 	QImage buffer;
 	bool validBuffer;
@@ -64,18 +67,21 @@ public:
 	QRectF boundingRect() const;
 	void paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
 
-	unsigned int getThreadHeight() const {return threadHeight;}
-	void setThreadHeight(unsigned int t);
+	double getThreadHeight() const {return threadHeight;}
+	void setThreadHeight(double t);
+
+	double getPatternSize()const{return patternSize;}
+	void setPatternSize(double s);
 
 	ThreadPattern * getThreadPattern() const {return threadPattern;}
 	void setThreadPattern(ThreadPattern * t);
 
-	void setRugSize(QSize s);
-	QSize getRugSize() const {return rugSize;}
+	void setRugSize(QSizeF s);
+	QSizeF getRugSize() const {return rugSize;}
 
 	QString getRugName() const {return rugName;}
 
-	QImage getBuffer(QSize s);
+	QImage getBuffer(QSizeF s);
 
 protected:
 	bool isMoving;
@@ -88,7 +94,7 @@ protected:
 
 signals:
 	void rugSelected(const QString&);
-	void changeSizeInteractive(QSize);
+	void changeSizeInteractive(QSizeF);
 };
 
 #endif // RUGITEM_H

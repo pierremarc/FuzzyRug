@@ -26,6 +26,7 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamAttributes>
 #include <QDebug>
+#include <QLocale>
 
 #include "threadpatterncollection.h"
 #include "threadpattern.h"
@@ -40,6 +41,8 @@ FuzzyLoader::FuzzyLoader(const QString& fn):
 
 void FuzzyLoader::load(QMap<QString, RugItem *> *rugs)
 {
+	QLocale sLoc;
+	QLocale::setDefault(QLocale::C);
 	foreach(const QString& k, rugs->keys())
 	{
 		delete rugs->value(k);
@@ -75,12 +78,20 @@ void FuzzyLoader::load(QMap<QString, RugItem *> *rugs)
 			qDebug()<<"RUG";
 			QXmlStreamAttributes attr(reader.attributes());
 			RugItem * ri(new RugItem(attr.value("name").toString()));
-			QSize rs;
-                        rs.setHeight(attr.value("height").toString().toDouble());
-                        rs.setWidth(attr.value("width").toString().toDouble());
+			QSizeF rs;
+			QString hstr,wstr,xstr,ystr,thstr,psstr;
+			hstr = attr.value("height").toString();
+			wstr = attr.value("width").toString();
+			xstr = attr.value("xpos").toString();
+			ystr = attr.value("ypos").toString();
+			thstr = attr.value("threadheight").toString();
+			psstr = attr.value("patternsize").toString();
+			rs.setHeight(hstr.toDouble());
+			rs.setWidth(wstr.toDouble());
 			ri->setRugSize(rs);
-                        ri->setPos(attr.value("xpos").toString().toDouble(), attr.value("ypos").toString().toDouble());
-                        ri->setThreadHeight(attr.value("threadheight").toString().toDouble());
+			ri->setPos(xstr.toDouble(), ystr.toDouble());
+			ri->setThreadHeight(thstr.toDouble());
+			ri->setPatternSize(psstr.toDouble());
 
 			while(reader.readNextStartElement())
 			{
@@ -98,5 +109,6 @@ void FuzzyLoader::load(QMap<QString, RugItem *> *rugs)
 		else
 			reader.skipCurrentElement();
 	}
+	QLocale::setDefault(sLoc);
 
 }

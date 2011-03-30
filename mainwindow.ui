@@ -106,7 +106,7 @@
         </sizepolicy>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
+        <item row="0" column="0" colspan="3">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
            <widget class="QLabel" name="label_3">
@@ -116,11 +116,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="rugWidth">
-            <property name="maximum">
-             <number>99999</number>
-            </property>
-           </widget>
+           <widget class="QDoubleSpinBox" name="rugWidth"/>
           </item>
           <item>
            <widget class="QLabel" name="label_4">
@@ -130,11 +126,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="rugHeight">
-            <property name="maximum">
-             <number>99999</number>
-            </property>
-           </widget>
+           <widget class="QDoubleSpinBox" name="rugHeight"/>
           </item>
           <item>
            <widget class="QLabel" name="label_5">
@@ -144,47 +136,17 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="threadHeight">
-            <property name="maximum">
-             <number>999</number>
-            </property>
-           </widget>
+           <widget class="QDoubleSpinBox" name="threadHeight"/>
           </item>
           <item>
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="label_7">
             <property name="text">
-             <string>Zoom</string>
+             <string>pattern Size</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QSlider" name="zoom">
-            <property name="minimum">
-             <number>10</number>
-            </property>
-            <property name="maximum">
-             <number>1200</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-            <property name="pageStep">
-             <number>100</number>
-            </property>
-            <property name="value">
-             <number>100</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="zoomLabel">
-            <property name="text">
-             <string>100%</string>
-            </property>
-           </widget>
+           <widget class="QDoubleSpinBox" name="patternSize"/>
           </item>
           <item>
            <spacer name="horizontalSpacer">
@@ -201,8 +163,44 @@
           </item>
          </layout>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0" colspan="3">
          <widget class="QGraphicsView" name="rugView"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Zoom</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSlider" name="zoom">
+          <property name="minimum">
+           <number>10</number>
+          </property>
+          <property name="maximum">
+           <number>1200</number>
+          </property>
+          <property name="singleStep">
+           <number>10</number>
+          </property>
+          <property name="pageStep">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="zoomLabel">
+          <property name="text">
+           <string>100%</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -216,7 +214,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>18</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

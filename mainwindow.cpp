@@ -50,6 +50,18 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle("FuzzyRug");
     rugScene = new QGraphicsScene(0,0, 5000, 5000);
 
+    ui->actionNew->setShortcut(QKeySequence::New);
+    ui->actionOpen->setShortcut(QKeySequence::Open);
+    ui->actionSave->setShortcut(QKeySequence::Save);
+    ui->actionSave_As->setShortcut(QKeySequence::SaveAs);
+    ui->actionPrint->setShortcut(QKeySequence::Print);
+    ui->actionQuit->setShortcut(QKeySequence::Quit);
+
+    ui->rugHeight->setRange(1.0, 100000.0);
+    ui->rugWidth->setRange(1.0, 100000.0);
+    ui->patternSize->setRange(1.0, 100000.0);
+    ui->threadHeight->setRange(1.0, 10000.0);
+
     ui->rugView->setScene(rugScene);
 
     connect(ui->addPattern, SIGNAL(clicked()), this, SLOT(slotAddPattern()));
@@ -59,9 +71,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->rugList, SIGNAL(itemSelectionChanged()), this, SLOT(slotChangeCurrentRug()));
     connect(ui->patternList, SIGNAL(itemSelectionChanged()), this, SLOT(slotSelectPattern()));
 
-    connect(ui->rugHeight, SIGNAL(valueChanged(int)), this, SLOT(slotChangeRugHeight(int)));
-    connect(ui->rugWidth, SIGNAL(valueChanged(int)), this, SLOT(slotChangeRugWidth(int)));
-    connect(ui->threadHeight, SIGNAL(valueChanged(int)), this, SLOT(slotChangeThreadHeight(int)));
+    connect(ui->rugHeight, SIGNAL(valueChanged(double)), this, SLOT(slotChangeRugHeight(double)));
+    connect(ui->rugWidth, SIGNAL(valueChanged(double)), this, SLOT(slotChangeRugWidth(double)));
+    connect(ui->threadHeight, SIGNAL(valueChanged(double)), this, SLOT(slotChangeThreadHeight(double)));
+    connect(ui->patternSize, SIGNAL(valueChanged(double)), this, SLOT(slotChangePatternSize(double)));
 
     connect(ui->zoom, SIGNAL(valueChanged(int)), this, SLOT(slotZoom(int)));
 
@@ -83,17 +96,22 @@ MainWindow * MainWindow::MW()
 	return MWInstance;
 }
 
+void MainWindow::blockSpinBoxesSignal(bool b)
+{
+	ui->rugHeight->blockSignals(b);
+	ui->rugWidth->blockSignals(b);
+	ui->threadHeight->blockSignals(b);
+	ui->patternSize->blockSignals(b);
+}
+
 void MainWindow::updateSpinBoxes()
 {
-	ui->rugHeight->blockSignals(true);
-	ui->rugWidth->blockSignals(true);
-	ui->threadHeight->blockSignals(true);
+	blockSpinBoxesSignal(true);
 	ui->rugHeight->setValue(currentRug->getRugSize().height());
 	ui->rugWidth->setValue(currentRug->getRugSize().width());
 	ui->threadHeight->setValue(currentRug->getThreadHeight());
-	ui->rugHeight->blockSignals(false);
-	ui->rugWidth->blockSignals(false);
-	ui->threadHeight->blockSignals(false);
+	ui->patternSize->setValue(currentRug->getPatternSize());
+	blockSpinBoxesSignal(false);
 }
 
 void MainWindow::addPattern(QString path)
@@ -153,7 +171,7 @@ void MainWindow::addRug(RugItem *ri)
 	rugScene->addItem(ri);
 
 	connect(ri, SIGNAL(rugSelected(QString)), this, SLOT(slotChangeCurrentRug(QString)));
-	connect(ri, SIGNAL(changeSizeInteractive(QSize)), this, SLOT(slotUpdateSizeFromCanvas(QSize)));
+	connect(ri, SIGNAL(changeSizeInteractive(QSizeF)), this, SLOT(slotUpdateSizeFromCanvas(QSizeF)));
 
 }
 
@@ -230,34 +248,42 @@ void MainWindow::slotSelectPattern()
 		tp = tpc->value(pn);
 	currentRug->setThreadPattern(tp);
 	QImage im(tp->getImage());
-	ui->rugWidth->setValue( im.width() / 2 );
+	ui->rugWidth->setValue( im.widthMM() / 2.0 );
+	ui->patternSize->setValue(im.widthMM());
 
 }
 
-void MainWindow::slotChangeRugHeight(int v)
+void MainWindow::slotChangeRugHeight(double v)
 {
 	if(!currentRug)
 		return;
-	QSize s(currentRug->getRugSize());
+	QSizeF s(currentRug->getRugSize());
 	s.setHeight(v);
 	currentRug->setRugSize(s);
 }
 
-void MainWindow::slotChangeRugWidth(int v)
+void MainWindow::slotChangeRugWidth(double v)
 {
 	if(!currentRug)
 		return;
-	QSize s(currentRug->getRugSize());
+	QSizeF s(currentRug->getRugSize());
 	s.setWidth(v);
 	currentRug->setRugSize(s);
 }
 
 
-void MainWindow::slotChangeThreadHeight(int v)
+void MainWindow::slotChangeThreadHeight(double v)
 {
 	if(!currentRug)
 		return;
 	currentRug->setThreadHeight(v);
+}
+
+void MainWindow::slotChangePatternSize(double v)
+{
+	if(!currentRug)
+		return;
+	currentRug->setPatternSize(v);
 }
 
 void MainWindow::slotZoom(int s)
@@ -335,7 +361,7 @@ void MainWindow::slotPrint()
 }
 
 
-void MainWindow::slotUpdateSizeFromCanvas(QSize s)
+void MainWindow::slotUpdateSizeFromCanvas(QSizeF s)
 {
 	updateSpinBoxes();
 }

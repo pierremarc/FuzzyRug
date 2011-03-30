@@ -52,6 +52,7 @@ public:
 private:
 	Ui::MainWindow *ui;
 
+	void blockSpinBoxesSignal(bool b);
 	void updateSpinBoxes();
 	void setCurrentFile(QString f);
 
@@ -68,9 +69,10 @@ private slots:
 	void slotChangeCurrentRug(const QString& rn);
 	void slotSelectPattern();
 
-	void slotChangeRugWidth(int v);
-	void slotChangeRugHeight(int v);
-	void slotChangeThreadHeight(int v);
+	void slotChangeRugWidth(double v);
+	void slotChangeRugHeight(double v);
+	void slotChangeThreadHeight(double v);
+	void slotChangePatternSize(double v);
 
 	void slotZoom(int s);
 
@@ -80,7 +82,7 @@ private slots:
 	void slotSaveAs();
 	void slotPrint();
 
-	void slotUpdateSizeFromCanvas(QSize s);
+	void slotUpdateSizeFromCanvas(QSizeF s);
 };
 
 #endif // MAINWINDOW_H
