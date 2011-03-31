@@ -254,7 +254,7 @@ void MainWindow::slotSelectPattern()
 		tp = tpc->value(pn);
 	currentRug->setThreadPattern(tp);
 	QImage im(tp->getImage());
-	qDebug()<<"SlotSP"<<im.width()<<im.widthMM()<<im.dotsPerMeterX();
+	qDebug()<<"SlotSP"<<im.width()<<im.widthMM()<< im.logicalDpiX() << im.physicalDpiX()<< im.dotsPerMeterX();
 	ui->rugWidth->setValue( im.widthMM() / 2.0 );
 	ui->patternSize->setValue(im.widthMM());
 
