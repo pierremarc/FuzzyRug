@@ -77,7 +77,7 @@ void RugItem::fillBuffer()
 	QPen pen;
 	const double bottom(RUGITEM_MARGIN + rugSize.height());
 	const double right(RUGITEM_MARGIN + rugSize.width());
-	const double step(rugSize.width() / (rugSize.width() * wp100 / 100.0) );
+	const double step(rugSize.width() / (rugSize.width() * 100.0 / wp100) );
 	const int rectifW(ceil(boundingRect().width()));
 	const int rectifH(ceil(boundingRect().height()));
 	buffer = QImage(QSize(rectifW, rectifH), QImage::Format_ARGB32);
