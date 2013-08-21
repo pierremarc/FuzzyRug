@@ -1,0 +1,14 @@
+Fuzzy Rug is a software made by Pierre Marchand for textile designer Diane Steverlynck.
+It is used to make carpet patterns based on the first line of pixels of an imported picture.
+
+
+INSTALL
+=======
+    qmake
+    make
+
+To launch the software
+    ./FuzzyRug
+
+Optional: to install it system-wise
+    make install
