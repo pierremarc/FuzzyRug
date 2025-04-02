@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       +=  widgets printsupport
 
 TARGET = FuzzyRug
 TEMPLATE = app
